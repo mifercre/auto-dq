@@ -1,0 +1,37 @@
+version: '3.1'
+
+services:
+
+  frontend:
+    image: auto-dq-frontend:local
+    ports:
+      - "8001:80"
+
+  db:
+    image: postgres:12.3
+    restart: always
+    env_file: ${PWD}/backend/.env
+    environment:
+      PGDATA: /var/lib/postgresql/data/pgdata
+    volumes:
+      - ./volumes/postgres:/var/lib/postgresql/data
+
+  backend:
+    image: auto-dq-backend:local
+    env_file: ${PWD}/backend/.env
+    volumes:
+      - ${PWD}/backend:/usr/src/app
+    command: ["./wait-for-postgres.sh", "./entrypoint.sh"]
+    ports:
+      - "8000:8000"
+
+  redis:
+    image: redis:3.2
+
+  worker:
+    image: auto-dq-backend:local
+    env_file: ${PWD}/backend/.env
+    volumes:
+      - ${PWD}/backend:/usr/src/app
+      - ./volumes/celery:/var/log/celery
+    command: ["./wait-for-postgres.sh", "./entrypoint-worker.sh"]
