@@ -5,7 +5,7 @@ from .custom_check import CustomCheck, CustomCheckCreate, CustomCheckInDB, Custo
     CustomCheckUpdateMultiple, CustomCheckName, CustomCheckWithExecutions, CustomCheckWithLastExecution
 from .check_execution import CheckExecution, CheckExecutionCreate, CheckExecutionInDB, CheckExecutionUpdate, \
     CheckExecutionWithCheckName, CheckExecutionWithLogs, CheckExecutionBase, Stats
-from .db import DB, DBCreate, DBInDB, DBUpdate, DBCreateInternal, DBWithSchemas, TestDBConn
+from .db import DB, DBCreate, DBInDB, DBUpdate, DBCreateInternal, DBWithSchemas, TestDBConn, SupportedDBs
 from .db_schema import DBSchema, DBSchemaCreate, DBSchemaInDB, DBSchemaUpdate, DBSchemaWithTables
 from .db_table import DBTable, DBTableCreate, DBTableInDB, DBTableUpdate, DBTableWithColumns
 from .db_column import DBColumn, DBColumnCreate, DBColumnInDB, DBColumnUpdate

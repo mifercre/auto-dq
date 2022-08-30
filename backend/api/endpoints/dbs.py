@@ -1,5 +1,5 @@
 import json
-from typing import Any, List, Optional
+from typing import Any, List, Optional, Dict
 
 from fastapi import APIRouter, Depends, Response, HTTPException
 from sqlalchemy.orm import Session
@@ -8,6 +8,7 @@ import crud
 import schemas
 from api import deps
 from celery_app import celery_app
+from core.db_engines import engine_specs
 from services.db import DBService
 from utils import logger
 
@@ -29,7 +30,7 @@ def read_dbs(
     return dbs
 
 
-@router.get('/{id}', response_model=schemas.DB)
+@router.get('/{id:int}', response_model=schemas.DB)
 def read_db_detail(
     *,
     db: Session = Depends(deps.get_db),
@@ -117,6 +118,17 @@ def test_conn(
         return schemas.TestDBConn(success=True)
     except OperationalError:
         return schemas.TestDBConn(success=False)
+
+
+@router.get('/supported_dbs', response_model=List[schemas.SupportedDBs])
+def supported_dbs(
+    response: Response,
+    db: Session = Depends(deps.get_db),
+) -> Any:
+    """
+    Retrieve all supported DB types
+    """
+    return [schemas.SupportedDBs(id=e, type=e) for e in list(engine_specs.keys())]
 
 
 def get_or_404(db, id):

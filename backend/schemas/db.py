@@ -54,3 +54,8 @@ class DBWithSchemas(DBInDBBase):
 
 class TestDBConn(BaseModel):
     success: bool
+
+
+class SupportedDBs(BaseModel):
+    id: str
+    type: str

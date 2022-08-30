@@ -20,7 +20,6 @@ const App = () => (
         dashboard={Dashboard}
         customRoutes={customRoutes}
     >
-        <Resource name="checks_base" />
         <Resource name="checks" list={CheckList} edit={CheckEdit} show={CheckShow} create={CheckCreate} />
         <Resource name="custom_checks" list={CustomCheckList} edit={CustomCheckEdit} show={CustomCheckShow} create={CustomCheckCreate} />
         <Resource name="check_executions" list={CheckExecutionList} show={CheckExecutionShow} />
@@ -28,7 +27,11 @@ const App = () => (
         <Resource name="db_schemas" list={DBSchemaList} show={DBSchemaShow} />
         <Resource name="db_tables" list={DBTableList} show={DBTableShow} />
         <Resource name="db_columns" show={DBColumnShow} />
+
+        {/* Resources without CRUD UI pages */}
+        <Resource name="checks_base" />
         <Resource name="db_table_partitions"/>
+        <Resource name="dbs/supported_dbs"/>
     </Admin>
 );
 

@@ -35,10 +35,11 @@ def uniqueness(check_id: int):
 
     try:
         check = crud.check.get(db=session, id=check_id)
-        check_query = CheckService(session).get_query(check)
-        logger.debug(check_query)
+        cursor = check.database.get_conn().raw_connection().cursor()
+        check_query, params = CheckService(session).get_query(check, cursor)
+        logger.debug('%s\n%s', check_query, params)
 
-        df = df_from_query(check_query, conn=check.database.get_conn())
+        df = df_from_query(check_query, params=params, conn=check.database.get_conn())
         logger.debug('Rows: {}'.format(df.shape[0]))
         logger.debug('Unique rows: {}'.format(df.drop_duplicates().shape[0]))
 
@@ -73,10 +74,11 @@ def outliers(check_id: int):
 
     try:
         check = crud.check.get(db=session, id=check_id)
-        check_query = CheckService(session).get_query(check)
-        logger.debug(check_query)
+        cursor = check.database.get_conn().raw_connection().cursor()
+        check_query, params = CheckService(session).get_query(check, cursor)
+        logger.debug('%s\n%s', check_query, params)
 
-        df = df_from_query(check_query, conn=check.database.get_conn())
+        df = df_from_query(check_query, params=params, conn=check.database.get_conn())
         df['is_outlier'] = np.abs(df[check.column.name] - df[check.column.name].mean()) > (3 * df[check.column.name].std())
         logger.debug('Rows with outliers: {}'.format(df[df['is_outlier']].shape[0]))
         status = CheckExecutionStatus.SUCCESS.value
@@ -105,10 +107,11 @@ def freshness(check_id: int):
 
     try:
         check = crud.check.get(db=session, id=check_id)
-        check_query = CheckService(session).get_query(check)
-        logger.debug(check_query)
+        cursor = check.database.get_conn().raw_connection().cursor()
+        check_query, params = CheckService(session).get_query(check, cursor)
+        logger.debug('%s\n%s', check_query, params)
 
-        df = df_from_query(check_query, conn=check.database.get_conn())
+        df = df_from_query(check_query, params=params, conn=check.database.get_conn())
 
         # TODO fix column conversion
         logger.debug(df.head())
@@ -147,10 +150,11 @@ def non_null(check_id: int):
 
     try:
         check = crud.check.get(db=session, id=check_id)
-        check_query = CheckService(session).get_query(check)
-        logger.debug(check_query)
+        cursor = check.database.get_conn().raw_connection().cursor()
+        check_query, params = CheckService(session).get_query(check, cursor)
+        logger.debug('%s\n%s', check_query, params)
 
-        df = df_from_query(check_query, conn=check.database.get_conn())
+        df = df_from_query(check_query, params=params, conn=check.database.get_conn())
 
         df['has_null'] = df.isnull().values.sum() > 0
         logger.debug(df[df['has_null']])
@@ -181,10 +185,11 @@ def ordered(check_id: int):
     logger.debug('non_null check_id: {}'.format(check_id))
     try:
         check = crud.check.get(db=session, id=check_id)
-        check_query = CheckService(session).get_query(check)
-        logger.debug(check_query)
+        cursor = check.database.get_conn().raw_connection().cursor()
+        check_query, params = CheckService(session).get_query(check, cursor)
+        logger.debug('%s\n%s', check_query, params)
 
-        df = df_from_query(check_query, conn=check.database.get_conn())
+        df = df_from_query(check_query, params=params, conn=check.database.get_conn())
 
         from models.check import ORDERED_METRIC_NAME
         df['prev'] = df[ORDERED_METRIC_NAME].shift()
