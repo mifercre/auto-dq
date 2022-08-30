@@ -2,7 +2,8 @@ import * as React from "react";
 import { 
     List, Datagrid, TextField, Show, SimpleShowLayout, Pagination, ReferenceManyField, SingleFieldList, ChipField, 
     Create, SimpleForm, TextInput, NumberInput, CloneButton, EditButton, Edit, useNotify, SelectInput, ShowButton,
-    required
+    required,
+    ReferenceInput
 } from 'react-admin';
 import LabelImportantIcon from '@material-ui/icons/LabelImportant';
 import CachedIcon from '@material-ui/icons/Cached';
@@ -113,7 +114,9 @@ export const DBCreate = props => (
     <Create {...props}>
         <SimpleForm>
             <TextInput source="name" validate={[required()]} />
-            <SelectInput source="type" choices={DB_TYPES} validate={[required()]} />
+            <ReferenceInput label="Type" source="type" reference="dbs/supported_dbs" validate={[required()]}>
+                <SelectInput optionText="type" />
+            </ReferenceInput>
             <TextInput source="hostname" validate={[required()]} />
             <NumberInput source="port" validate={[required()]} />
             <TextInput source="database" />
@@ -129,7 +132,9 @@ export const DBEdit = props => (
         <SimpleForm>
             <TextInput disabled source="id" />
             <TextInput source="name" validate={[required()]} />
-            <SelectInput source="type" choices={DB_TYPES} validate={[required()]} />
+            <ReferenceInput label="Type" source="type" reference="dbs/supported_dbs" validate={[required()]}>
+                <SelectInput optionText="type" />
+            </ReferenceInput>
             <TextInput source="hostname" validate={[required()]} />
             <NumberInput source="port" validate={[required()]} />
             <TextInput source="database" />

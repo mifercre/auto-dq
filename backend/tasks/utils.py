@@ -1,4 +1,6 @@
 import json
+from functools import wraps
+
 import numpy as np
 
 from urllib.parse import urlparse
@@ -22,3 +24,16 @@ def is_url(url):
         return all([result.scheme, result.netloc])
     except ValueError:
         return False
+
+
+def required_args(params):
+    def inner(func):
+        @wraps(func)
+        def wrapper(self, *args, **kwargs):
+            for p in params:
+                if not kwargs.get(p):
+                    raise ValueError(f'Missing param {p}')
+
+            return func(self, *args, **kwargs)
+        return wrapper
+    return inner

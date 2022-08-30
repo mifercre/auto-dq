@@ -23,10 +23,12 @@ export default {
         };
         const url = `${apiUrl}/${resource}/?${stringify(query)}`;
         return httpClient(url).then(({ headers, json }) => {
-            let total = 10;
-            if (headers !== null) {
+            let total = 0;
+            if (headers !== null && headers.has('x-content-range')) {
                 const XContentRange = (headers.get('x-content-range') || '/').split('/').pop() || ''
                 total = parseInt(XContentRange, 10)
+            } else {
+                total = json.length
             }
             return ({
                 data: json,
