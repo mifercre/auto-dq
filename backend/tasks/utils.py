@@ -30,10 +30,11 @@ def required_args(params):
     def inner(func):
         @wraps(func)
         def wrapper(self, *args, **kwargs):
+            req_args = []
             for p in params:
                 if not kwargs.get(p):
                     raise ValueError(f'Missing param {p}')
-
-            return func(self, *args, **kwargs)
+                req_args.append(kwargs.get(p))
+            return func(self, *req_args)
         return wrapper
     return inner

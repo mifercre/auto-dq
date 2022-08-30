@@ -100,17 +100,21 @@ docker exec -it docker exec -it backend_backend_1 bash
 # Demo Setup
 
 1. Launch backend and frontend containers as explained above
-2. Launch a separate sample db: `docker run --rm --name world-db --publish 5433:5432 ghusta/postgres-world-db:2.6`
+2.
+    - a) Launch sample psql db: `docker run --rm -d --name world-db --publish 5433:5432 ghusta/postgres-world-db:2.6`
+    - b) Launch sample mysql db: `docker run --rm -d --name mysql-employees --publish 3306:3306 -e MYSQL_ROOT_PASSWORD=test genschsa/mysql-employees`
 3. Open Admin UI (http://localhost:8001) > Sources > DBs > Create >
+    (for psql) 
     ```
-    Name: world-db
-    Type: postgresql
-    Hostname: host.docker.internal
-    Port: 5433
-    Database: world-db
-    User: world
-    Password: world123
-    ```
+        Name: world-db
+        Type: postgresql
+        Hostname: host.docker.internal
+        Port: 5433
+        Database: world-db
+        User: world
+        Password: world123
+    ```    
+    (for mysql: name "employees", port "3306", user: "root", pw: "test")
 4. After DB is created you can try "Fetch Schemas", and also try creating both custom and 'normal' checks.
 
 

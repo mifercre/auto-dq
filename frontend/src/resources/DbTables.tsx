@@ -77,7 +77,10 @@ const CreateCheckButtons = (props) => {
         return <div>
             {nonNullButton}
         </div>
-    } else if (['VARCHAR', 'TEXT', 'DATE'].includes(props.record.type)) {
+    } else if (
+        ['VARCHAR', 'TEXT', 'DATE'].includes(props.record.type) || 
+        ['CHAR', 'VARCHAR'].some(prefix => props.record.type.startsWith(prefix)) 
+        ) {
         return <div>
             {uniquenessButton}
             {nonNullButton}

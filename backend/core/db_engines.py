@@ -199,7 +199,57 @@ class PostgresEngineSpec(BaseEngineSpec):
         ).as_string(cursor)
 
 
+class MysqlEngineSpec(BaseEngineSpec):
+    """
+    Use back ticks (`) instead of double quotes to escape columns, tables and schemas.
+    """
+    engine = 'mysql'
+
+    def get_sqla_engine(self, hostname, port, database, username=None, password=None):
+        return create_engine(f'mysql://{username}:{password}@{hostname}:{port}/{database}')
+
+    def get_table_names(self, inspector, schema):
+        tables = inspector.get_table_names(schema)
+        tables.extend(inspector.get_foreign_table_names(schema))
+        return sorted(tables)
+
+    @staticmethod
+    def _plain_select_column_q(check):
+        return f"""
+            SELECT `{check.column.name}` 
+            FROM `{check.schema.name}`.`{check.table.name}`
+        """
+
+    @required_args(['check'])
+    def unique_column_q_template(self, check):
+        return self._plain_select_column_q(check)
+
+    @required_args(['check'])
+    def outlier_column_q_template(self, check):
+        return self._plain_select_column_q(check)
+
+    @required_args(['check'])
+    def non_null_column_q_template(self, check):
+        return self._plain_select_column_q(check)
+
+    @required_args(['check'])
+    def freshness_column_q_template(self, check):
+        return f"""
+            SELECT MAX(`{check.column.name}`) AS column_to_check
+            FROM `{check.schema.name}`.`{check.table.name}` 
+        """
+
+    @required_args(['check'])
+    def ordered_table_q_template(self, check):
+        return f"""
+            SELECT `{check.column.name}` 
+            FROM `{check.schema.name}`.`{check.table.name}`
+            GROUP BY 1 ORDER BY 1 ASC
+        """
+
+
 engine_specs: Dict[str, BaseEngineSpec] = {
     'presto': PrestoEngineSpec(),
     'postgresql': PostgresEngineSpec(),
+    'mysql': MysqlEngineSpec()
 }
